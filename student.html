@@ -40,7 +40,20 @@
   <div id="compList" class="small"></div>
 </div>
 
-<script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  try{
+    const auth = JSON.parse(localStorage.getItem('madin_demo_auth'));
+    if(!auth){ location.href='auth.html'; return; }
+    const allowed = ['Student'];
+    if(!allowed.includes(auth.role)){
+      alert('Access denied for role: ' + auth.role);
+      const map = { Student:'student.html', Parent:'parent.html', Teacher:'teacher.html', Administrator:'admin.html', Judge:'judge.html', FestController:'festcontroller.html' };
+      location.href = map[auth.role] || 'index.html';
+    }
+  }catch(e){ location.href='auth.html'; }
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
   const s = state(); const auth = currentAuth(); const student = auth ? s.students.find(x=>x.id===auth.idRef) || s.students[0] : s.students[0];

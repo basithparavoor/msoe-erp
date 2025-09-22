@@ -18,7 +18,20 @@
   <h3>Assigned Competitions & Enter Marks</h3>
   <div id="judgeComps" class="small"></div>
 </div>
-<script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  try{
+    const auth = JSON.parse(localStorage.getItem('madin_demo_auth'));
+    if(!auth){ location.href='auth.html'; return; }
+    const allowed = ['Judge'];
+    if(!allowed.includes(auth.role)){
+      alert('Access denied for role: ' + auth.role);
+      const map = { Student:'student.html', Parent:'parent.html', Teacher:'teacher.html', Administrator:'admin.html', Judge:'judge.html', FestController:'festcontroller.html' };
+      location.href = map[auth.role] || 'index.html';
+    }
+  }catch(e){ location.href='auth.html'; }
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
   const auth = currentAuth(); const judge = (auth && state().judges.find(j=>j.id===auth.idRef)) || state().judges[0] || {id:'J1', name:'Judge Demo'};
