@@ -10,7 +10,7 @@
   <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
   <div class="container">
     
-    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    <nav><a href="index.html">Home</a><a href="blog.html">Blog</a></nav>
     
     
 <div class="card"><h2>Campus Blog</h2></div>
@@ -25,13 +25,13 @@
   <div id="posts" class="small"></div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', ()=>{ const auth = currentAuth(); if(!auth){ document.getElementById('addPost').disabled=true; document.getElementById('post_title').placeholder='Sign in to post'; document.getElementById('post_content').placeholder='Sign in to post'; }
   function refresh(){
-    const s = state(); const posts = s.posts || []; document.getElementById('posts').innerHTML = posts.map(p=>`<div style='padding:8px;border:1px solid #eef4fb;border-radius:8px;margin-bottom:6px'><strong>${p.title}</strong><div class='small'>${formatDate(p.at)}</div><div style='margin-top:6px'>${p.content}</div></div>`).join('')||'<i>No posts</i>';
+    const s = state(); const posts = s.posts || []; document.getElementById('posts').innerHTML = posts.map(p=>`<div style='padding:8px;border:1px solid #eef4fb;border-radius:8px;margin-bottom:6px'><strong>${p.title}</strong><div class='small'>${formatDate(p.at)} — ${p.author ? 'by '+p.author : ''}</div><div style='margin-top:6px'>${p.content}</div></div>`).join('')||'<i>No posts</i>';
   }
   document.getElementById('addPost').addEventListener('click', ()=>{
     const title = document.getElementById('post_title').value.trim(); const content = document.getElementById('post_content').value.trim(); if(!title||!content){alert('Title & content required');return}
-    const s = state(); s.posts = s.posts || []; s.posts.unshift({title, content, at:new Date().toISOString()}); setState(s); document.getElementById('post_title').value=''; document.getElementById('post_content').value=''; refresh();
+    const s = state(); s.posts = s.posts || []; s.posts.unshift({title, content, at:new Date().toISOString(), author: currentAuth() ? currentAuth().username : 'Guest'}); setState(s); document.getElementById('post_title').value=''; document.getElementById('post_content').value=''; refresh();
   });
   refresh();
 });

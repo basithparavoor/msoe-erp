@@ -15,20 +15,23 @@
   <div class="container login-box">
     <div class="card">
       <h2>Sign in</h2>
-      <p class="small">Use demo credentials: <br/>
-        student/student123, parent/parent123, teacher/teacher123, admin/admin123, judge/judge123, festctrl/fest123
-      </p>
+            <script>
+      document.addEventListener("DOMContentLoaded", ()=>{
+        const s = state();
+        const users = s.users || {};
+        let html = "<ul style='margin-left:16px'>";
+        Object.keys(users).slice(0,50).forEach(k=>{
+          html += `<li><strong>${k}</strong> / ${users[k].password} — ${users[k].role}</li>`;
+        });
+        html += "</ul>";
+        document.getElementById('demoCreds').innerHTML = html;
+      });
+      </script>
+
       <div><label>Username</label><input id="username" /></div>
       <div><label>Password</label><input id="password" type="password" /></div>
+      <div style="margin-top:8px"><label><input type="checkbox" id="remember_me" /> Remember me</label> <button id="showPass" class="btn ghost" style="padding:4px 8px;margin-right:8px">Show</button></div>
       <div style="margin-top:8px"><button class="btn" id="loginBtn">Sign In</button></div>
-      <div style="margin-top:10px" class="hint">This is a mock authentication for demo only. No server — credentials are stored in the client.</div>
-    </div>
-    <div class="card">
-      <h3>Quick Links</h3>
-      <div class="grid">
-        <div><a class="btn" href="index.html">Public Home</a></div>
-      </div>
-    </div>
   </div>
   <footer>Demo multipage static site — data in localStorage</footer>
   <script src="app.js"></script>
@@ -37,7 +40,8 @@
       document.getElementById('loginBtn').addEventListener('click', ()=>{
         const u = document.getElementById('username').value.trim();
         const p = document.getElementById('password').value;
-        const res = signIn(u,p);
+        const remember = !!document.getElementById('remember_me').checked;
+        const res = signIn(u,p, remember);
         if(!res.ok){ alert(res.error); return; }
         // redirect based on role
         const role = res.payload.role;
@@ -45,6 +49,7 @@
         location.href = map[role] || 'index.html';
       });
     });
-  </script>
+  document.getElementById('showPass').addEventListener('click', ()=>{ const inp = document.getElementById('password'); if(inp.type==='password'){ inp.type='text'; document.getElementById('showPass').textContent='Hide'; } else { inp.type='password'; document.getElementById('showPass').textContent='Show'; }});
+</script>
 </body>
 </html>

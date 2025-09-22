@@ -47,5 +47,48 @@ document.addEventListener('DOMContentLoaded', ()=>{
   <footer>Demo multipage static site — data in localStorage</footer>
   <script src="app.js"></script>
   
+
+<hr/>
+<h3>Manage Accounts (Reset / Edit Passwords)</h3>
+<div class="card">
+  <div id="accountsList" class="small"></div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  // require admin role
+  if(!isAuthenticated()) { location.href='auth.html'; return; }
+  const auth = currentAuth();
+  if(auth.role !== 'Administrator'){ alert('Access denied'); location.href='index.html'; return; }
+
+  function renderAccounts(){
+    const s = state();
+    const users = s.users || {};
+    const rows = Object.keys(users).map(u=>{
+      const info = users[u];
+      return `<div style="padding:8px;border:1px solid #eef4fb;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;gap:8px"><div style="min-width:180px"><strong>${u}</strong><div class="small">${info.role} — ${info.idRef || ''}</div></div><div style="flex:1"><input placeholder="New password" id="pw_${u}" /></div><div><button class="btn" data-user="${u}" data-act="reset">Reset</button> <button class="btn ghost" data-user="${u}" data-act="delete">Delete</button></div></div>`;
+    }).join('') || '<i>No users</i>';
+    document.getElementById('accountsList').innerHTML = rows;
+    // attach handlers
+    document.querySelectorAll('button[data-act="reset"]').forEach(b=> b.onclick = (e)=> {
+      const uname = e.target.dataset.user;
+      const inp = document.getElementById('pw_' + uname);
+      const np = inp.value.trim();
+      if(!np){ alert('Enter new password'); return; }
+      const res = updateUserPassword(uname, np);
+      if(res.ok){ alert('Password updated for ' + uname); inp.value=''; } else alert('Error: ' + res.error);
+      renderAccounts();
+    });
+    document.querySelectorAll('button[data-act="delete"]').forEach(b=> b.onclick = (e)=> {
+      const uname = e.target.dataset.user;
+      if(!confirm('Delete user ' + uname + '? This will remove login only, not the student/parent record.')) return;
+      const res = deleteUser(uname);
+      if(res.ok){ alert('Deleted ' + uname); } else alert('Error: ' + res.error);
+      renderAccounts();
+    });
+  }
+  renderAccounts();
+});
+</script>
+
 </body>
 </html>

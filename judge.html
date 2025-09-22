@@ -10,7 +10,7 @@
   <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
   <div class="container">
     
-    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    <nav><a href="index.html">Home</a><a href="judge.html">Judge</a></nav>
     
     
 <div class="card"><h2>Judge Dashboard</h2></div>
@@ -21,7 +21,7 @@
 <script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
-  const judge = state().judges[0] || {id:'J1', name:'Judge Demo'};
+  const auth = currentAuth(); const judge = (auth && state().judges.find(j=>j.id===auth.idRef)) || state().judges[0] || {id:'J1', name:'Judge Demo'};
   function refresh(){
     const s = state();
     const compsHtml = s.fest.competitions.map(c=>{
