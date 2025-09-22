@@ -1,0 +1,20 @@
+
+:root{--accent:#0b74de;--muted:#666}
+*{box-sizing:border-box}
+body{font-family:Inter,Segoe UI,Roboto,Arial;margin:0;background:#f5f7fb;color:#111}
+header{background:#fff;padding:12px 20px;border-bottom:1px solid #e6eef9;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-weight:700;color:var(--accent)}
+.container{padding:18px;max-width:1100px;margin:0 auto}
+.card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 6px 18px rgba(11,116,222,0.06);margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(11,116,222,0.12)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.small{font-size:13px;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #eef4fb;text-align:left}
+input,select,textarea{padding:8px;border-radius:8px;border:1px solid #e1e8f2;width:100%;box-sizing:border-box}
+.flex{display:flex;gap:8px;align-items:center}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef7ff;color:var(--accent);font-weight:600}
+footer{padding:12px;text-align:center;color:var(--muted);font-size:13px}
+nav a{margin-right:12px;color:var(--accent);text-decoration:none;font-weight:600}

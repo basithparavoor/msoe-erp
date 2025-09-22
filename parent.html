@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Parent Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
+  <div class="container">
+    
+    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    
+    
+<div class="card"><h2>Parent Dashboard</h2></div>
+<div class="card">
+  <h3>Student Status</h3>
+  <div id="parentStatus" class="small"></div>
+</div>
+<script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const p = state().parents[0] || state().parents[0];
+  const student = findStudent(p ? p.studentId : 'S101') || state().students[0];
+  document.getElementById('parentStatus').innerHTML = `<div class="flex"><div class="small">${student.name} — ${student.batch}</div><div style="margin-left:auto"><strong>${student.present? 'Present':'Absent'}</strong></div></div><hr/><h4>Leaves</h4>${student.leaves.map(l=>`<div style='padding:6px;border-bottom:1px dashed #eef4fb'>${l.status} — ${l.reason} <div class='small'>${new Date(l.appliedAt).toLocaleDateString()}</div></div>`).join('')||'<i>No leaves</i>'}`;
+});
+</script>
+
+  </div>
+  <footer>Demo multipage static site — data in localStorage</footer>
+  <script src="app.js"></script>
+  
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Login — MA'DIN ERP Demo</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .login-box{max-width:420px;margin:40px auto}
+    .hint{background:#fffbe6;padding:10px;border-radius:8px;border:1px solid #fff0b3}
+  </style>
+</head>
+<body>
+  <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div></header>
+  <div class="container login-box">
+    <div class="card">
+      <h2>Sign in</h2>
+      <p class="small">Use demo credentials: <br/>
+        student/student123, parent/parent123, teacher/teacher123, admin/admin123, judge/judge123, festctrl/fest123
+      </p>
+      <div><label>Username</label><input id="username" /></div>
+      <div><label>Password</label><input id="password" type="password" /></div>
+      <div style="margin-top:8px"><button class="btn" id="loginBtn">Sign In</button></div>
+      <div style="margin-top:10px" class="hint">This is a mock authentication for demo only. No server — credentials are stored in the client.</div>
+    </div>
+    <div class="card">
+      <h3>Quick Links</h3>
+      <div class="grid">
+        <div><a class="btn" href="index.html">Public Home</a></div>
+      </div>
+    </div>
+  </div>
+  <footer>Demo multipage static site — data in localStorage</footer>
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      document.getElementById('loginBtn').addEventListener('click', ()=>{
+        const u = document.getElementById('username').value.trim();
+        const p = document.getElementById('password').value;
+        const res = signIn(u,p);
+        if(!res.ok){ alert(res.error); return; }
+        // redirect based on role
+        const role = res.payload.role;
+        const map = { Student:'student.html', Parent:'parent.html', Teacher:'teacher.html', Administrator:'admin.html', Judge:'judge.html', FestController:'festcontroller.html' };
+        location.href = map[role] || 'index.html';
+      });
+    });
+  </script>
+</body>
+</html>

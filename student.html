@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
+  <div class="container">
+    
+    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    
+    
+<div class="card">
+  <h2>Student Dashboard (Demo: first student)</h2>
+  <div id="stuHeader" class="small"></div>
+</div>
+<div class="card">
+  <h3>Profile</h3>
+  <div class="grid">
+    <div><label>Name</label><input id="stu_name"/></div>
+    <div><label>Age</label><input id="stu_age"/></div>
+    <div><label>Grade</label><input id="stu_grade"/></div>
+  </div>
+  <div style="margin-top:8px"><button class="btn" id="saveProfile">Save Profile</button></div>
+</div>
+<div class="card">
+  <h3>Attendance & Leave</h3>
+  <div class="flex"><div class="small">Status: <strong id="stuStatus"></strong></div><div style="margin-left:auto"><button class="btn ghost" id="toggleAtt">Toggle</button></div></div>
+  <hr/>
+  <h4>Apply for Leave</h4>
+  <textarea id="leave_reason" placeholder="Reason for leave"></textarea>
+  <div style="margin-top:8px"><button class="btn" id="applyLeave">Apply for Leave</button></div>
+  <div style="margin-top:8px"><h4>Your Leaves</h4><div id="leaveList" class="small"></div></div>
+</div>
+<div class="card">
+  <h3>Your Competitions</h3>
+  <div id="compList" class="small"></div>
+</div>
+
+<script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const s = state(); const student = s.students[0];
+  document.getElementById('stuHeader').innerHTML = `ID: ${student.id} <span class="badge">${student.batch}</span>`;
+  document.getElementById('stu_name').value = student.name;
+  document.getElementById('stu_age').value = student.profile.age;
+  document.getElementById('stu_grade').value = student.profile.grade;
+  function refresh(){
+    const st = state().students.find(x=>x.id===student.id);
+    document.getElementById('stuStatus').textContent = st.present ? 'Present' : 'Absent';
+    document.getElementById('leaveList').innerHTML = st.leaves.map(l=>`<div style="padding:6px;border:1px solid #eef4fb;border-radius:8px;margin-bottom:6px"><strong>${l.status}</strong> — ${l.reason} <div class="small">Applied: ${formatDate(l.appliedAt)}</div></div>`).join('')||'<i>No leaves</i>';
+    document.getElementById('compList').innerHTML = st.competitions.map(c=>`<div style='padding:6px;border-radius:8px;border:1px dashed #eef4fb;margin-bottom:6px'><strong>${c.name}</strong> — Stage: ${c.stage} — Status: ${c.status || 'Assigned'}</div>`).join('')||'<i>No competitions assigned</i>';
+  }
+  refresh();
+
+  document.getElementById('saveProfile').addEventListener('click', ()=>{
+    const st = state(); const t = st.students.find(x=>x.id===student.id);
+    t.name = document.getElementById('stu_name').value;
+    t.profile.age = parseInt(document.getElementById('stu_age').value)||t.profile.age;
+    t.profile.grade = document.getElementById('stu_grade').value||t.profile.grade;
+    setState(st); alert('Profile saved');
+    refresh();
+  });
+
+  document.getElementById('toggleAtt').addEventListener('click', ()=>{
+    const st = state(); const t = st.students.find(x=>x.id===student.id); t.present = !t.present; setState(st); refresh();
+  });
+
+  document.getElementById('applyLeave').addEventListener('click', ()=>{
+    const reason = document.getElementById('leave_reason').value.trim(); if(!reason){alert('Enter reason'); return}
+    const st = state(); const t = st.students.find(x=>x.id===student.id);
+    const leave = {id:'L'+Date.now(), reason, status:'Pending', appliedAt:new Date().toISOString(), returned:false};
+    t.leaves.push(leave); setState(st); document.getElementById('leave_reason').value=''; refresh();
+  });
+});
+</script>
+
+  </div>
+  <footer>Demo multipage static site — data in localStorage</footer>
+  <script src="app.js"></script>
+  
+</body>
+</html>

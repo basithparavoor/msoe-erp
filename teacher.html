@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Teacher Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
+  <div class="container">
+    
+    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    
+    
+<div class="card"><h2>Teacher Dashboard</h2></div>
+<div class="card">
+  <h3>Take Attendance</h3>
+  <table><thead><tr><th>ID</th><th>Name</th><th>Batch</th><th>Status</th><th>Action</th></tr></thead><tbody id="attTable"></tbody></table>
+</div>
+<div class="card">
+  <h3>Leave Applications</h3>
+  <div id="leaveApps" class="small"></div>
+</div>
+<script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  function refresh(){
+    const s = state();
+    document.getElementById('attTable').innerHTML = s.students.map(st=>`<tr><td>${st.id}</td><td>${st.name}</td><td>${st.batch}</td><td>${st.present? 'Present':'Absent'}</td><td><button class="btn" data-id="${st.id}" data-act="toggle">Toggle</button></td></tr>`).join('');
+    document.getElementById('leaveApps').innerHTML = s.students.flatMap(st=> st.leaves.map(l=>({student:st,leave:l}))).map(obj=>`<div style='padding:8px;border:1px solid #eef4fb;border-radius:8px;margin-bottom:6px'><strong>${obj.student.name}</strong> — ${obj.leave.reason}<div class='small'>Status: ${obj.leave.status}</div><div style='margin-top:6px'><button class='btn' data-leave='${obj.leave.id}' data-act='approve'>Approve</button> <button class='btn ghost' data-leave='${obj.leave.id}' data-act='reject'>Reject</button></div></div>`).join('')||'<i>No leave applications</i>';
+    attach();
+  }
+  function attach(){
+    document.querySelectorAll('button[data-act="toggle"]').forEach(b=>b.onclick = (e)=>{ const id=e.target.dataset.id; const s=state(); const st=s.students.find(x=>x.id===id); st.present=!st.present; setState(s); refresh();});
+    document.querySelectorAll('button[data-act="approve"]').forEach(b=>b.onclick = (e)=>{ const id=e.target.dataset.leave; const s=state(); s.students.forEach(st=> st.leaves.forEach(l=> { if(l.id===id){ l.status='Approved' } } )); setState(s); refresh();});
+    document.querySelectorAll('button[data-act="reject"]').forEach(b=>b.onclick = (e)=>{ const id=e.target.dataset.leave; const s=state(); s.students.forEach(st=> st.leaves.forEach(l=> { if(l.id===id){ l.status='Rejected' } } )); setState(s); refresh();});
+  }
+  refresh();
+});
+</script>
+
+  </div>
+  <footer>Demo multipage static site — data in localStorage</footer>
+  <script src="app.js"></script>
+  
+</body>
+</html>

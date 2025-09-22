@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>MA'DIN ERP — Home</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
+  <div class="container">
+    
+    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    
+    
+<div class="card">
+  <h2>Welcome — MA'DIN SCHOOL OF EXCELLENCE ERP (Multi-page Demo)</h2>
+  <p class="small">This demo is static and uses <code>localStorage</code>. Use the navigation to switch between role-specific pages.</p>
+</div>
+<div class="card">
+  <h3>Fest: Excelentia — Public Page</h3>
+  <div id="publicUpdates" class="small">Schedule and results will appear here when published by fest controller.</div>
+</div>
+<div class="card">
+  <h3>Quick Actions</h3>
+  <div class="grid">
+    <div><a class="btn" href="student.html">Open Student Dashboard</a></div>
+    <div><a class="btn" href="teacher.html">Open Teacher Dashboard</a></div>
+    <div><a class="btn" href="festcontroller.html">Open Fest Controller</a></div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  // show published results if any
+  const s = state();
+  const pub = document.getElementById('publicUpdates');
+  if(s.fest.publishedResults){
+    let html = '';
+    s.fest.competitions.forEach(c=>{
+      const agg = (c.marks||[]).reduce((acc,m)=>{ acc[m.studentId]=(acc[m.studentId]||0)+m.marks; return acc }, {});
+      const list = Object.keys(agg).map(sid=>({sid,total:agg[sid]})).sort((a,b)=>b.total-a.total).map(r=>`<div><strong>${(findStudent(r.sid)||{name:r.sid}).name}</strong> — ${r.total} pts</div>`).join('');
+      html += `<div style="padding:8px;border:1px solid #eef4fb;border-radius:8px;margin-bottom:6px"><strong>${c.name}</strong><div class="small">Stage: ${c.stage}</div>${list}</div>`;
+    });
+    pub.innerHTML = html;
+  } else {
+    pub.innerHTML = '<i>Results not published yet</i>';
+  }
+});
+</script>
+
+  </div>
+  <footer>Demo multipage static site — data in localStorage</footer>
+  <script src="app.js"></script>
+  
+</body>
+</html>

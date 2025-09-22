@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Fest Controller</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
+  <div class="container">
+    
+    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    
+    
+<div class="card"><h2>Fest Controller — Excelentia</h2></div>
+<div class="card">
+  <h3>Create Competition</h3>
+  <div class="grid">
+    <div><label>Competition Name</label><input id="comp_name"/></div>
+    <div><label>Stage</label><input id="comp_stage" placeholder="Main / Sub / Offstage"/></div>
+    <div><label>Onstage?</label><select id="comp_onstage"><option value="yes">Yes</option><option value="no">No</option></select></div>
+  </div>
+  <div style="margin-top:8px"><button class="btn" id="createComp">Create</button></div>
+  <hr/>
+  <h3>Competitions</h3>
+  <div id="compListAdmin" class="small"></div>
+</div>
+<div class="card">
+  <h3>Assign Students to Competition</h3>
+  <div class="grid">
+    <div><label>Select Competition</label><select id="assign_comp"></select></div>
+    <div><label>Select Student</label><select id="assign_student"></select></div>
+  </div>
+  <div style="margin-top:8px"><button class="btn" id="assignBtn">Assign</button></div>
+</div>
+<div class="card">
+  <h3>Judges & Publish</h3>
+  <div class="grid"><div><label>Judge Name</label><input id="judge_name"/></div><div style="align-self:end"><button class="btn" id="addJudge">Add Judge</button></div></div>
+  <div style="margin-top:8px"><button class="btn" id="publishResults">Publish Results</button> <span id="pubStatus" class="small"></span></div>
+</div>
+
+<script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  function refresh(){
+    const s = state();
+    const comps = s.fest.competitions.map(c=>`<div style='padding:8px;border:1px dashed #eef4fb;border-radius:8px;margin-bottom:6px'><strong>${c.name}</strong> — Stage: ${c.stage} — Onstage: ${c.onstage} <div class='small'>Participants: ${c.participants? c.participants.length:0} | Judges: ${c.judges? c.judges.length:0}</div></div>`).join('')||'<i>No competitions</i>';
+    document.getElementById('compListAdmin').innerHTML = comps;
+    document.getElementById('assign_comp').innerHTML = s.fest.competitions.map(c=>`<option value='${c.id}'>${c.name}</option>`).join('');
+    document.getElementById('assign_student').innerHTML = s.students.map(st=>`<option value='${st.id}'>${st.name} (${st.id})</option>`).join('');
+    document.getElementById('pubStatus').textContent = 'Published: ' + s.fest.publishedResults;
+  }
+  document.getElementById('createComp').addEventListener('click', ()=>{
+    const s = state(); const id='C'+Date.now(); const comp = {id,name:document.getElementById('comp_name').value||'C-'+Date.now(), stage:document.getElementById('comp_stage').value||'Main', onstage: document.getElementById('comp_onstage').value==='yes', participants:[], judges:[], marks:[]};
+    comp.id = id; s.fest.competitions.push(comp); setState(s); refresh();
+  });
+  document.getElementById('assignBtn').addEventListener('click', ()=>{
+    const s = state(); const cid=document.getElementById('assign_comp').value, sid=document.getElementById('assign_student').value;
+    const comp = s.fest.competitions.find(x=>x.id===cid); if(!comp){alert('Select competition'); return;}
+    comp.participants = comp.participants || [];
+    if(!comp.participants.includes(sid)){ comp.participants.push(sid); const stu = s.students.find(x=>x.id===sid); stu.competitions.push({id:cid,name:comp.name,stage:comp.stage,status:'Assigned'}); setState(s); refresh(); }
+  });
+  document.getElementById('addJudge').addEventListener('click', ()=>{ const s = state(); const name = document.getElementById('judge_name').value.trim(); if(!name){alert('Name required');return;} const jid='J'+Date.now(); s.judges.push({id:jid,name}); setState(s); refresh();});
+  document.getElementById('publishResults').addEventListener('click', ()=>{ const s = state(); s.fest.publishedResults = true; setState(s); alert('Results published'); refresh();});
+  refresh();
+});
+</script>
+
+  </div>
+  <footer>Demo multipage static site — data in localStorage</footer>
+  <script src="app.js"></script>
+  
+</body>
+</html>

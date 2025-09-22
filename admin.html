@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Administrator Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
+  <div class="container">
+    
+    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    
+    
+<div class="card"><h2>Administrator Dashboard</h2></div>
+<div class="card">
+  <h3>Manage Students</h3>
+  <div class="grid">
+    <div><label>Name</label><input id="new_name"/></div>
+    <div><label>Batch</label><input id="new_batch"/></div>
+    <div><label>Grade</label><input id="new_grade"/></div>
+  </div>
+  <div style="margin-top:8px"><button class="btn" id="addStudent">Add Student</button></div>
+  <hr/>
+  <h3>All Data</h3>
+  <div id="allData" class="small"></div>
+</div>
+<script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  function refresh(){
+    const s = state();
+    document.getElementById('allData').innerHTML = `<div><strong>Students</strong> (${s.students.length})</div><div><strong>Teachers</strong> (${s.teachers.length})</div><div><strong>Fest Competitions</strong> (${s.fest.competitions.length})</div>`;
+  }
+  document.getElementById('addStudent').addEventListener('click', ()=>{
+    const s = state(); const nid = 'S'+(100+Date.now()%10000);
+    const name = document.getElementById('new_name').value.trim(); if(!name){alert('Enter name');return}
+    s.students.push({id:nid,name, batch: document.getElementById('new_batch').value || 'Batch X', present:false, profile:{age:0,grade:document.getElementById('new_grade').value||''}, leaves:[], competitions:[]});
+    setState(s); refresh(); alert('Student added: '+nid);
+  });
+  refresh();
+});
+</script>
+
+  </div>
+  <footer>Demo multipage static site — data in localStorage</footer>
+  <script src="app.js"></script>
+  
+</body>
+</html>

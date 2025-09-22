@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Judge Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header><div class="logo">MA'DIN SCHOOL — ERP Demo</div><div class="flex"><div class="small">Students: 150 | Teachers: 5 | Batches: 8</div><div style="margin-left:16px"><button id="resetBtn" class="btn ghost">Reset Data</button></div></div></header>
+  <div class="container">
+    
+    <nav><a href="index.html">Home</a><a href="student.html">Student</a><a href="parent.html">Parent</a><a href="teacher.html">Teacher</a><a href="admin.html">Admin</a><a href="festcontroller.html">Fest Ctrl</a><a href="judge.html">Judge</a><a href="blog.html">Blog</a></nav>
+    
+    
+<div class="card"><h2>Judge Dashboard</h2></div>
+<div class="card">
+  <h3>Assigned Competitions & Enter Marks</h3>
+  <div id="judgeComps" class="small"></div>
+</div>
+<script>document.addEventListener('DOMContentLoaded', ()=>{ if(!isAuthenticated()){ location.href='auth.html'; return; } });</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const judge = state().judges[0] || {id:'J1', name:'Judge Demo'};
+  function refresh(){
+    const s = state();
+    const compsHtml = s.fest.competitions.map(c=>{
+      const parts = (c.participants||[]).map(pid=>{
+        const st = findStudent(pid) || {name:pid};
+        return `<div style='padding:6px;border-bottom:1px dashed #eef4fb'><strong>${st.name}</strong> (${pid}) — <input placeholder='marks' data-cid='${c.id}' data-sid='${pid}' class='markInput' /> <button class='btn' data-cid='${c.id}' data-sid='${pid}' data-act='saveMark'>Save</button></div>`;
+      }).join('')||'<i>No participants</i>';
+      return `<div style='margin-bottom:10px;padding:8px;border:1px solid #eef4fb;border-radius:8px'><strong>${c.name}</strong><div class='small'>Stage: ${c.stage}</div>${parts}</div>`;
+    }).join('')||'<i>No competitions</i>';
+    document.getElementById('judgeComps').innerHTML = compsHtml;
+    attach();
+  }
+  function attach(){
+    document.querySelectorAll('button[data-act="saveMark"]').forEach(b=>b.onclick=(e)=>{ const cid=e.target.dataset.cid, sid=e.target.dataset.sid; const inp = document.querySelector(`input[data-cid='${cid}'][data-sid='${sid}']`); const val = parseFloat(inp.value); if(isNaN(val)){alert('Enter numeric marks');return} const s = state(); const comp = s.fest.competitions.find(x=>x.id===cid); comp.marks = comp.marks || []; comp.marks.push({studentId:sid, judgeId:judge.id, marks:val}); setState(s); alert('Mark saved (pending publish)'); });
+  }
+  refresh();
+});
+</script>
+
+  </div>
+  <footer>Demo multipage static site — data in localStorage</footer>
+  <script src="app.js"></script>
+  
+</body>
+</html>
